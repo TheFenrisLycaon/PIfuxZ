@@ -1,11 +1,13 @@
-import torch
-import numpy as np
-from .mesh_util import *
-from .sample_util import *
-from .geometry import *
 import cv2
+import numpy as np
+import torch
 from PIL import Image
 from tqdm import tqdm
+
+from .geometry import *
+from .mesh_util import *
+from .sample_util import *
+
 
 def reshape_multiview_tensors(image_tensor, calib_tensor):
     # Careful here! Because we put single view and multiview together,
@@ -53,14 +55,16 @@ def gen_mesh(opt, net, cuda, data, save_path, use_octree=True):
         save_img_path = save_path[:-4] + '.png'
         save_img_list = []
         for v in range(image_tensor.shape[0]):
-            save_img = (np.transpose(image_tensor[v].detach().cpu().numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
+            save_img = (np.transpose(image_tensor[v].detach().cpu(
+            ).numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
             save_img_list.append(save_img)
         save_img = np.concatenate(save_img_list, axis=1)
-        Image.fromarray(np.uint8(save_img[:,:,::-1])).save(save_img_path)
+        Image.fromarray(np.uint8(save_img[:, :, ::-1])).save(save_img_path)
 
         verts, faces, _, _ = reconstruction(
             net, cuda, calib_tensor, opt.resolution, b_min, b_max, use_octree=use_octree)
-        verts_tensor = torch.from_numpy(verts.T).unsqueeze(0).to(device=cuda).float()
+        verts_tensor = torch.from_numpy(
+            verts.T).unsqueeze(0).to(device=cuda).float()
         xyz_tensor = net.projection(verts_tensor, calib_tensor[:1])
         uv = xyz_tensor[:, :2, :]
         color = index(image_tensor[:1], uv).detach().cpu().numpy()[0].T
@@ -69,6 +73,7 @@ def gen_mesh(opt, net, cuda, data, save_path, use_octree=True):
     except Exception as e:
         print(e)
         print('Can not create marching cubes at this time.')
+
 
 def gen_mesh_color(opt, netG, netC, cuda, data, save_path, use_octree=True):
     image_tensor = data['img'].to(device=cuda)
@@ -84,16 +89,18 @@ def gen_mesh_color(opt, netG, netC, cuda, data, save_path, use_octree=True):
         save_img_path = save_path[:-4] + '.png'
         save_img_list = []
         for v in range(image_tensor.shape[0]):
-            save_img = (np.transpose(image_tensor[v].detach().cpu().numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
+            save_img = (np.transpose(image_tensor[v].detach().cpu(
+            ).numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
             save_img_list.append(save_img)
         save_img = np.concatenate(save_img_list, axis=1)
-        Image.fromarray(np.uint8(save_img[:,:,::-1])).save(save_img_path)
+        Image.fromarray(np.uint8(save_img[:, :, ::-1])).save(save_img_path)
 
         verts, faces, _, _ = reconstruction(
             netG, cuda, calib_tensor, opt.resolution, b_min, b_max, use_octree=use_octree)
 
         # Now Getting colors
-        verts_tensor = torch.from_numpy(verts.T).unsqueeze(0).to(device=cuda).float()
+        verts_tensor = torch.from_numpy(
+            verts.T).unsqueeze(0).to(device=cuda).float()
         verts_tensor = reshape_sample_tensor(verts_tensor, opt.num_views)
         color = np.zeros(verts.shape)
         interval = 10000
@@ -110,6 +117,7 @@ def gen_mesh_color(opt, netG, netC, cuda, data, save_path, use_octree=True):
     except Exception as e:
         print(e)
         print('Can not create marching cubes at this time.')
+
 
 def adjust_learning_rate(optimizer, epoch, lr, schedule, gamma):
     """Sets the learning rate to the initial LR decayed by schedule"""
@@ -158,10 +166,12 @@ def calc_error(opt, net, cuda, dataset, num_tests):
             calib_tensor = data['calib'].to(device=cuda)
             sample_tensor = data['samples'].to(device=cuda).unsqueeze(0)
             if opt.num_views > 1:
-                sample_tensor = reshape_sample_tensor(sample_tensor, opt.num_views)
+                sample_tensor = reshape_sample_tensor(
+                    sample_tensor, opt.num_views)
             label_tensor = data['labels'].to(device=cuda).unsqueeze(0)
 
-            res, error = net.forward(image_tensor, sample_tensor, calib_tensor, labels=label_tensor)
+            res, error = net.forward(
+                image_tensor, sample_tensor, calib_tensor, labels=label_tensor)
 
             IOU, prec, recall = compute_acc(res, label_tensor)
 
@@ -175,6 +185,7 @@ def calc_error(opt, net, cuda, dataset, num_tests):
 
     return np.average(erorr_arr), np.average(IOU_arr), np.average(prec_arr), np.average(recall_arr)
 
+
 def calc_error_color(opt, netG, netC, cuda, dataset, num_tests):
     if num_tests > len(dataset):
         num_tests = len(dataset)
@@ -186,19 +197,21 @@ def calc_error_color(opt, netG, netC, cuda, dataset, num_tests):
             # retrieve the data
             image_tensor = data['img'].to(device=cuda)
             calib_tensor = data['calib'].to(device=cuda)
-            color_sample_tensor = data['color_samples'].to(device=cuda).unsqueeze(0)
+            color_sample_tensor = data['color_samples'].to(
+                device=cuda).unsqueeze(0)
 
             if opt.num_views > 1:
-                color_sample_tensor = reshape_sample_tensor(color_sample_tensor, opt.num_views)
+                color_sample_tensor = reshape_sample_tensor(
+                    color_sample_tensor, opt.num_views)
 
             rgb_tensor = data['rgbs'].to(device=cuda).unsqueeze(0)
 
             netG.filter(image_tensor)
-            _, errorC = netC.forward(image_tensor, netG.get_im_feat(), color_sample_tensor, calib_tensor, labels=rgb_tensor)
+            _, errorC = netC.forward(image_tensor, netG.get_im_feat(
+            ), color_sample_tensor, calib_tensor, labels=rgb_tensor)
 
             # print('{0}/{1} | Error inout: {2:06f} | Error color: {3:06f}'
             #       .format(idx, num_tests, errorG.item(), errorC.item()))
             error_color_arr.append(errorC.item())
 
     return np.average(error_color_arr)
-

@@ -1,9 +1,9 @@
 import random
 
 import numpy as np
-from skimage.filters import gaussian
 import torch
 from PIL import Image, ImageFilter
+from skimage.filters import gaussian
 
 
 class RandomVerticalFlip(object):
@@ -57,8 +57,8 @@ class RandomGaussianBlur(object):
 class Lighting(object):
     """Lighting noise(AlexNet - style PCA - based noise)"""
 
-    def __init__(self, alphastd, 
-                 eigval=(0.2175, 0.0188, 0.0045), 
+    def __init__(self, alphastd,
+                 eigval=(0.2175, 0.0188, 0.0045),
                  eigvec=((-0.5675, 0.7192, 0.4009),
                          (-0.5808, -0.0045, -0.8140),
                          (-0.5836, -0.6948, 0.4203))):

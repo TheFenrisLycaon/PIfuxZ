@@ -36,7 +36,8 @@ def batch_eval(points, eval_func, num_samples=512 * 512 * 512):
         sdf[i * num_samples:i * num_samples + num_samples] = eval_func(
             points[:, i * num_samples:i * num_samples + num_samples])
     if num_pts % num_samples:
-        sdf[num_batches * num_samples:] = eval_func(points[:, num_batches * num_samples:])
+        sdf[num_batches *
+            num_samples:] = eval_func(points[:, num_batches * num_samples:])
 
     return sdf
 
@@ -62,7 +63,7 @@ def eval_grid_octree(coords, eval_func,
 
     while reso > 0:
         # subdivide the grid
-        grid_mask[0:resolution[0]:reso, 0:resolution[1]:reso, 0:resolution[2]:reso] = True
+        grid_mask[0:resolution[0]:reso, 0:resolution[1]                  :reso, 0:resolution[2]:reso] = True
         # test samples in this iteration
         test_mask = np.logical_and(grid_mask, dirty)
         #print('step size:', reso, 'test sample size:', test_mask.sum())
@@ -93,7 +94,8 @@ def eval_grid_octree(coords, eval_func,
                     v_max = v.max()
                     # this cell is all the same
                     if (v_max - v_min) < threshold:
-                        sdf[x:x + reso, y:y + reso, z:z + reso] = (v_max + v_min) / 2
+                        sdf[x:x + reso, y:y + reso, z:z +
+                            reso] = (v_max + v_min) / 2
                         dirty[x:x + reso, y:y + reso, z:z + reso] = False
         reso //= 2
 

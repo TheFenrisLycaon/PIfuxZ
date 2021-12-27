@@ -1,8 +1,8 @@
-from skimage import measure
 import numpy as np
 import torch
-from .sdf import create_grid, eval_grid_octree, eval_grid
 from skimage import measure
+
+from .sdf import create_grid, eval_grid, eval_grid_octree
 
 
 def reconstruction(net, cuda, calib_tensor,
@@ -42,7 +42,8 @@ def reconstruction(net, cuda, calib_tensor,
 
     # Finally we do marching cubes
     try:
-        verts, faces, normals, values = measure.marching_cubes_lewiner(sdf, 0.5)
+        verts, faces, normals, values = measure.marching_cubes_lewiner(
+            sdf, 0.5)
         # transform verts into world coordinate system
         verts = np.matmul(mat[:3, :3], verts.T) + mat[:3, 3:4]
         verts = verts.T
@@ -68,7 +69,8 @@ def save_obj_mesh_with_color(mesh_path, verts, faces, colors):
 
     for idx, v in enumerate(verts):
         c = colors[idx]
-        file.write('v %.4f %.4f %.4f %.4f %.4f %.4f\n' % (v[0], v[1], v[2], c[0], c[1], c[2]))
+        file.write('v %.4f %.4f %.4f %.4f %.4f %.4f\n' %
+                   (v[0], v[1], v[2], c[0], c[1], c[2]))
     for f in faces:
         f_plus = f + 1
         file.write('f %d %d %d\n' % (f_plus[0], f_plus[2], f_plus[1]))

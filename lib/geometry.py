@@ -12,7 +12,8 @@ def index(feat, uv):
     uv = uv.unsqueeze(2)  # [B, N, 1, 2]
     # NOTE: for newer PyTorch, it seems that training results are degraded due to implementation diff in F.grid_sample
     # for old versions, simply remove the aligned_corners argument.
-    samples = torch.nn.functional.grid_sample(feat, uv, align_corners=True)  # [B, C, N, 1]
+    samples = torch.nn.functional.grid_sample(
+        feat, uv, align_corners=True)  # [B, C, N, 1]
     return samples[:, :, :, 0]  # [B, C, N]
 
 

@@ -1,16 +1,17 @@
-import torch
-from torch.nn import init
-import torch.nn as nn
-import torch.nn.functional as F
 import functools
 
+import cv2
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from PIL import Image
+from torch.nn import init
+from tqdm import tqdm
+
+from .geometry import index
 from .mesh_util import *
 from .sample_util import *
-from .geometry import index
-import cv2
-from PIL import Image
-from tqdm import tqdm
 
 
 def reshape_multiview_tensors(image_tensor, calib_tensor):
@@ -359,7 +360,7 @@ class ConvBlock(nn.Module):
             self.bn2 = nn.GroupNorm(32, int(out_planes / 2))
             self.bn3 = nn.GroupNorm(32, int(out_planes / 4))
             self.bn4 = nn.GroupNorm(32, in_planes)
-        
+
         if in_planes != out_planes:
             self.downsample = nn.Sequential(
                 self.bn4,
@@ -393,4 +394,3 @@ class ConvBlock(nn.Module):
         out3 += residual
 
         return out3
-  
