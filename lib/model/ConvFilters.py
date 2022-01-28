@@ -12,14 +12,17 @@ class MultiConv(nn.Module):
 
         for l in range(0, len(filter_channels) - 1):
             self.filters.append(
-                nn.Conv2d(filter_channels[l], filter_channels[l + 1], kernel_size=4, stride=2))
+                nn.Conv2d(
+                    filter_channels[l], filter_channels[l + 1], kernel_size=4, stride=2
+                )
+            )
             self.add_module("conv%d" % l, self.filters[l])
 
     def forward(self, image):
-        '''
+        """
         :param image: [BxC_inxHxW] tensor of input image
         :return: list of [BxC_outxHxW] tensors of output features
-        '''
+        """
         y = image
         # y = F.relu(self.bn0(self.conv0(y)), True)
         feat_pyramid = [y]
@@ -69,17 +72,17 @@ class Vgg16(torch.nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, model='resnet18'):
+    def __init__(self, model="resnet18"):
         super(ResNet, self).__init__()
 
-        if model == 'resnet18':
+        if model == "resnet18":
             net = resnet.resnet18(pretrained=True)
-        elif model == 'resnet34':
+        elif model == "resnet34":
             net = resnet.resnet34(pretrained=True)
-        elif model == 'resnet50':
+        elif model == "resnet50":
             net = resnet.resnet50(pretrained=True)
         else:
-            raise NameError('Unknown Fan Filter setting!')
+            raise NameError("Unknown Fan Filter setting!")
 
         self.conv1 = net.conv1
 
@@ -91,10 +94,10 @@ class ResNet(nn.Module):
         self.layer4 = net.layer4
 
     def forward(self, image):
-        '''
+        """
         :param image: [BxC_inxHxW] tensor of input image
         :return: list of [BxC_outxHxW] tensors of output features
-        '''
+        """
 
         y = image
         feat_pyramid = []

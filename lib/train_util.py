@@ -18,12 +18,12 @@ def reshape_multiview_tensors(image_tensor, calib_tensor):
         image_tensor.shape[0] * image_tensor.shape[1],
         image_tensor.shape[2],
         image_tensor.shape[3],
-        image_tensor.shape[4]
+        image_tensor.shape[4],
     )
     calib_tensor = calib_tensor.view(
         calib_tensor.shape[0] * calib_tensor.shape[1],
         calib_tensor.shape[2],
-        calib_tensor.shape[3]
+        calib_tensor.shape[3],
     )
 
     return image_tensor, calib_tensor
@@ -38,33 +38,35 @@ def reshape_sample_tensor(sample_tensor, num_views):
     sample_tensor = sample_tensor.view(
         sample_tensor.shape[0] * sample_tensor.shape[1],
         sample_tensor.shape[2],
-        sample_tensor.shape[3]
+        sample_tensor.shape[3],
     )
     return sample_tensor
 
 
 def gen_mesh(opt, net, cuda, data, save_path, use_octree=True):
-    image_tensor = data['img'].to(device=cuda)
-    calib_tensor = data['calib'].to(device=cuda)
+    image_tensor = data["img"].to(device=cuda)
+    calib_tensor = data["calib"].to(device=cuda)
 
     net.filter(image_tensor)
 
-    b_min = data['b_min']
-    b_max = data['b_max']
+    b_min = data["b_min"]
+    b_max = data["b_max"]
     try:
-        save_img_path = save_path[:-4] + '.png'
+        save_img_path = save_path[:-4] + ".png"
         save_img_list = []
         for v in range(image_tensor.shape[0]):
-            save_img = (np.transpose(image_tensor[v].detach().cpu(
-            ).numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
+            save_img = (
+                np.transpose(image_tensor[v].detach().cpu().numpy(), (1, 2, 0)) * 0.5
+                + 0.5
+            )[:, :, ::-1] * 255.0
             save_img_list.append(save_img)
         save_img = np.concatenate(save_img_list, axis=1)
         Image.fromarray(np.uint8(save_img[:, :, ::-1])).save(save_img_path)
 
         verts, faces, _, _ = reconstruction(
-            net, cuda, calib_tensor, opt.resolution, b_min, b_max, use_octree=use_octree)
-        verts_tensor = torch.from_numpy(
-            verts.T).unsqueeze(0).to(device=cuda).float()
+            net, cuda, calib_tensor, opt.resolution, b_min, b_max, use_octree=use_octree
+        )
+        verts_tensor = torch.from_numpy(verts.T).unsqueeze(0).to(device=cuda).float()
         xyz_tensor = net.projection(verts_tensor, calib_tensor[:1])
         uv = xyz_tensor[:, :2, :]
         color = index(image_tensor[:1], uv).detach().cpu().numpy()[0].T
@@ -72,35 +74,43 @@ def gen_mesh(opt, net, cuda, data, save_path, use_octree=True):
         save_obj_mesh_with_color(save_path, verts, faces, color)
     except Exception as e:
         print(e)
-        print('Can not create marching cubes at this time.')
+        print("Can not create marching cubes at this time.")
 
 
 def gen_mesh_color(opt, netG, netC, cuda, data, save_path, use_octree=True):
-    image_tensor = data['img'].to(device=cuda)
-    calib_tensor = data['calib'].to(device=cuda)
+    image_tensor = data["img"].to(device=cuda)
+    calib_tensor = data["calib"].to(device=cuda)
 
     netG.filter(image_tensor)
     netC.filter(image_tensor)
     netC.attach(netG.get_im_feat())
 
-    b_min = data['b_min']
-    b_max = data['b_max']
+    b_min = data["b_min"]
+    b_max = data["b_max"]
     try:
-        save_img_path = save_path[:-4] + '.png'
+        save_img_path = save_path[:-4] + ".png"
         save_img_list = []
         for v in range(image_tensor.shape[0]):
-            save_img = (np.transpose(image_tensor[v].detach().cpu(
-            ).numpy(), (1, 2, 0)) * 0.5 + 0.5)[:, :, ::-1] * 255.0
+            save_img = (
+                np.transpose(image_tensor[v].detach().cpu().numpy(), (1, 2, 0)) * 0.5
+                + 0.5
+            )[:, :, ::-1] * 255.0
             save_img_list.append(save_img)
         save_img = np.concatenate(save_img_list, axis=1)
         Image.fromarray(np.uint8(save_img[:, :, ::-1])).save(save_img_path)
 
         verts, faces, _, _ = reconstruction(
-            netG, cuda, calib_tensor, opt.resolution, b_min, b_max, use_octree=use_octree)
+            netG,
+            cuda,
+            calib_tensor,
+            opt.resolution,
+            b_min,
+            b_max,
+            use_octree=use_octree,
+        )
 
         # Now Getting colors
-        verts_tensor = torch.from_numpy(
-            verts.T).unsqueeze(0).to(device=cuda).float()
+        verts_tensor = torch.from_numpy(verts.T).unsqueeze(0).to(device=cuda).float()
         verts_tensor = reshape_sample_tensor(verts_tensor, opt.num_views)
         color = np.zeros(verts.shape)
         interval = 10000
@@ -116,7 +126,7 @@ def gen_mesh_color(opt, netG, netC, cuda, data, save_path, use_octree=True):
         save_obj_mesh_with_color(save_path, verts, faces, color)
     except Exception as e:
         print(e)
-        print('Can not create marching cubes at this time.')
+        print("Can not create marching cubes at this time.")
 
 
 def adjust_learning_rate(optimizer, epoch, lr, schedule, gamma):
@@ -124,15 +134,15 @@ def adjust_learning_rate(optimizer, epoch, lr, schedule, gamma):
     if epoch in schedule:
         lr *= gamma
         for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+            param_group["lr"] = lr
     return lr
 
 
 def compute_acc(pred, gt, thresh=0.5):
-    '''
+    """
     return:
         IOU, precision, and recall
-    '''
+    """
     with torch.no_grad():
         vol_pred = pred > thresh
         vol_gt = gt > thresh
@@ -162,16 +172,16 @@ def calc_error(opt, net, cuda, dataset, num_tests):
         for idx in tqdm(range(num_tests)):
             data = dataset[idx * len(dataset) // num_tests]
             # retrieve the data
-            image_tensor = data['img'].to(device=cuda)
-            calib_tensor = data['calib'].to(device=cuda)
-            sample_tensor = data['samples'].to(device=cuda).unsqueeze(0)
+            image_tensor = data["img"].to(device=cuda)
+            calib_tensor = data["calib"].to(device=cuda)
+            sample_tensor = data["samples"].to(device=cuda).unsqueeze(0)
             if opt.num_views > 1:
-                sample_tensor = reshape_sample_tensor(
-                    sample_tensor, opt.num_views)
-            label_tensor = data['labels'].to(device=cuda).unsqueeze(0)
+                sample_tensor = reshape_sample_tensor(sample_tensor, opt.num_views)
+            label_tensor = data["labels"].to(device=cuda).unsqueeze(0)
 
             res, error = net.forward(
-                image_tensor, sample_tensor, calib_tensor, labels=label_tensor)
+                image_tensor, sample_tensor, calib_tensor, labels=label_tensor
+            )
 
             IOU, prec, recall = compute_acc(res, label_tensor)
 
@@ -183,7 +193,12 @@ def calc_error(opt, net, cuda, dataset, num_tests):
             prec_arr.append(prec.item())
             recall_arr.append(recall.item())
 
-    return np.average(erorr_arr), np.average(IOU_arr), np.average(prec_arr), np.average(recall_arr)
+    return (
+        np.average(erorr_arr),
+        np.average(IOU_arr),
+        np.average(prec_arr),
+        np.average(recall_arr),
+    )
 
 
 def calc_error_color(opt, netG, netC, cuda, dataset, num_tests):
@@ -195,20 +210,25 @@ def calc_error_color(opt, netG, netC, cuda, dataset, num_tests):
         for idx in tqdm(range(num_tests)):
             data = dataset[idx * len(dataset) // num_tests]
             # retrieve the data
-            image_tensor = data['img'].to(device=cuda)
-            calib_tensor = data['calib'].to(device=cuda)
-            color_sample_tensor = data['color_samples'].to(
-                device=cuda).unsqueeze(0)
+            image_tensor = data["img"].to(device=cuda)
+            calib_tensor = data["calib"].to(device=cuda)
+            color_sample_tensor = data["color_samples"].to(device=cuda).unsqueeze(0)
 
             if opt.num_views > 1:
                 color_sample_tensor = reshape_sample_tensor(
-                    color_sample_tensor, opt.num_views)
+                    color_sample_tensor, opt.num_views
+                )
 
-            rgb_tensor = data['rgbs'].to(device=cuda).unsqueeze(0)
+            rgb_tensor = data["rgbs"].to(device=cuda).unsqueeze(0)
 
             netG.filter(image_tensor)
-            _, errorC = netC.forward(image_tensor, netG.get_im_feat(
-            ), color_sample_tensor, calib_tensor, labels=rgb_tensor)
+            _, errorC = netC.forward(
+                image_tensor,
+                netG.get_im_feat(),
+                color_sample_tensor,
+                calib_tensor,
+                labels=rgb_tensor,
+            )
 
             # print('{0}/{1} | Error inout: {2:06f} | Error color: {3:06f}'
             #       .format(idx, num_tests, errorG.item(), errorC.item()))

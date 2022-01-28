@@ -16,11 +16,13 @@ def loadShader(shaderType, shaderFile):
     # check if file exists, get full path name
     strFilename = findFileOrThrow(shaderFile)
     shaderData = None
-    with open(strFilename, 'r') as f:
+    with open(strFilename, "r") as f:
         shaderData = f.read()
 
     shader = glCreateShader(shaderType)
-    glShaderSource(shader, shaderData)  # note that this is a simpler function call than in C
+    glShaderSource(
+        shader, shaderData
+    )  # note that this is a simpler function call than in C
 
     # This shader compilation is more explicit than the one used in
     # framework.cpp, which relies on a glutil wrapper function.
@@ -41,7 +43,9 @@ def loadShader(shaderType, shaderFile):
         elif shaderType is GL_FRAGMENT_SHADER:
             strShaderType = "fragment"
 
-        print("Compilation failure for " + strShaderType + " shader:\n" + str(strInfoLog))
+        print(
+            "Compilation failure for " + strShaderType + " shader:\n" + str(strInfoLog)
+        )
 
     return shader
 
@@ -77,7 +81,9 @@ def findFileOrThrow(strBasename):
         return strBasename
 
     LOCAL_FILE_DIR = "data" + os.sep
-    GLOBAL_FILE_DIR = os.path.dirname(os.path.abspath(__file__)) + os.sep + "data" + os.sep
+    GLOBAL_FILE_DIR = (
+        os.path.dirname(os.path.abspath(__file__)) + os.sep + "data" + os.sep
+    )
 
     strFilename = LOCAL_FILE_DIR + strBasename
     if os.path.isfile(strFilename):
@@ -87,4 +93,4 @@ def findFileOrThrow(strBasename):
     if os.path.isfile(strFilename):
         return strFilename
 
-    raise IOError('Could not find target file ' + strBasename)
+    raise IOError("Could not find target file " + strBasename)

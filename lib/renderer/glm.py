@@ -40,6 +40,7 @@ def cross(u, v):
 
 # below functions can be optimized
 
+
 def translate(m, v):
     res = np.copy(m)
     res[:, 3] = m[:, 0] * v[0] + m[:, 1] * v[1] + m[:, 2] * v[2] + m[:, 3]
@@ -82,7 +83,7 @@ def perspective(fovy, aspect, zNear, zFar):
     res[0][0] = 1 / (aspect * tanHalfFovy)
     res[1][1] = 1 / (tanHalfFovy)
     res[2][3] = -1
-    res[2][2] = - (zFar + zNear) / (zFar - zNear)
+    res[2][2] = -(zFar + zNear) / (zFar - zNear)
     res[3][2] = -(2 * zFar * zNear) / (zFar - zNear)
 
     return res.T
@@ -93,10 +94,10 @@ def ortho(left, right, bottom, top, zNear, zFar):
     res = identity()
     res[0][0] = 2 / (right - left)
     res[1][1] = 2 / (top - bottom)
-    res[2][2] = - 2 / (zFar - zNear)
-    res[3][0] = - (right + left) / (right - left)
-    res[3][1] = - (top + bottom) / (top - bottom)
-    res[3][2] = - (zFar + zNear) / (zFar - zNear)
+    res[2][2] = -2 / (zFar - zNear)
+    res[3][0] = -(right + left) / (right - left)
+    res[3][1] = -(top + bottom) / (top - bottom)
+    res[3][2] = -(zFar + zNear) / (zFar - zNear)
     return res.T
 
 
