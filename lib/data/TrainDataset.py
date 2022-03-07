@@ -15,7 +15,7 @@ log = logging.getLogger("trimesh")
 log.setLevel(40)
 
 
-def load_trimesh(root_dir):
+def loadTrimesh(root_dir):
     folders = os.listdir(root_dir)
     meshs = {}
     for i, f in enumerate(folders):
@@ -27,7 +27,7 @@ def load_trimesh(root_dir):
     return meshs
 
 
-def save_samples_truncted_prob(fname, points, prob):
+def saveSamplesTrunc(fname, points, prob):
     """
     Save the visualization of sampling to a ply file.
     Red points represent positive predictions.
@@ -55,7 +55,7 @@ def save_samples_truncted_prob(fname, points, prob):
 
 class TrainDataset(Dataset):
     @staticmethod
-    def modify_commandline_options(parser, is_train):
+    def modifyCLI(parser, is_train):
         return parser
 
     def __init__(self, opt, phase="train"):
@@ -109,7 +109,7 @@ class TrainDataset(Dataset):
             ]
         )
 
-        self.mesh_dic = load_trimesh(self.OBJ)
+        self.mesh_dic = loadTrimesh(self.OBJ)
 
     def get_subjects(self):
         all_subjects = os.listdir(self.RENDER)
@@ -320,7 +320,7 @@ class TrainDataset(Dataset):
             1,
         )
 
-        # save_samples_truncted_prob('out.ply', samples.T, labels.T)
+        # saveSamplesTrunc('out.ply', samples.T, labels.T)
         # exit()
 
         samples = torch.Tensor(samples).float()

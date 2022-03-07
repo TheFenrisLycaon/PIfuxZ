@@ -13,7 +13,7 @@ import argparse
 from tqdm import tqdm
 
 
-def make_rotate(rx, ry, rz):
+def makeRotation(rx, ry, rz):
     sinX = np.sin(rx)
     sinY = np.sin(ry)
     sinZ = np.sin(rz)
@@ -146,7 +146,7 @@ def rotateBand2(x, R):
     return dst
 
 
-def render_prt_ortho(
+def renderOrtho(
     out_path,
     folder_name,
     subject_name,
@@ -251,10 +251,10 @@ def render_prt_ortho(
     for p in pitch:
         for y in tqdm(range(0, 360, angl_step)):
             R = np.matmul(
-                make_rotate(math.radians(p), 0, 0), make_rotate(0, math.radians(y), 0)
+                makeRotation(math.radians(p), 0, 0), makeRotation(0, math.radians(y), 0)
             )
             if up_axis == 2:
-                R = np.matmul(R, make_rotate(math.radians(90), 0, 0))
+                R = np.matmul(R, makeRotation(math.radians(90), 0, 0))
 
             rndr.rot_matrix = R
             rndr_uv.rot_matrix = R
@@ -265,7 +265,7 @@ def render_prt_ortho(
                 sh_id = random.randint(0, shs.shape[0] - 1)
                 sh = shs[sh_id]
                 sh_angle = 0.2 * np.pi * (random.random() - 0.5)
-                sh = rotateSH(sh, make_rotate(0, sh_angle, 0).T)
+                sh = rotateSH(sh, makeRotation(0, sh_angle, 0).T)
 
                 dic = {
                     "sh": sh,
@@ -388,7 +388,7 @@ if __name__ == "__main__":
     if args.input[-1] == "/":
         args.input = args.input[:-1]
     subject_name = args.input.split("/")[-1][:-4]
-    render_prt_ortho(
+    renderOrtho(
         args.out_dir,
         args.input,
         subject_name,

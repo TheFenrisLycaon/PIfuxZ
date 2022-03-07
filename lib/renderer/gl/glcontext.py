@@ -61,9 +61,10 @@ _find_library_old = ctypes.util.find_library
 try:
 
     def _find_library_new(name):
-        return {"GL": "libOpenGL.so", "EGL": "libEGL.so",}.get(
-            name, _find_library_old(name)
-        )
+        return {
+            "GL": "libOpenGL.so",
+            "EGL": "libEGL.so",
+        }.get(name, _find_library_old(name))
 
     util.find_library = _find_library_new
     import OpenGL.GL as gl
@@ -103,12 +104,12 @@ def create_initialized_headless_egl_display():
 def create_opengl_context(surface_size=(640, 480)):
     """Create offscreen OpenGL context and make it current.
 
-  Users are expected to directly use EGL API in case more advanced
-  context management is required.
+    Users are expected to directly use EGL API in case more advanced
+    context management is required.
 
-  Args:
-    surface_size: (width, height), size of the offscreen rendering surface.
-  """
+    Args:
+      surface_size: (width, height), size of the offscreen rendering surface.
+    """
     egl_display = create_initialized_headless_egl_display()
     if egl_display == egl.EGL_NO_DISPLAY:
         raise ImportError("Cannot initialize a headless EGL display.")

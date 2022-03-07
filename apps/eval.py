@@ -33,14 +33,14 @@ class Evaluator:
                 transforms.ToTensor(),
                 transforms.Normalize(
                     [
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
-                        (0.5, 0.5, 0.5),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
+                        (0.45, 0.45, 0.45),
                     ]
                 ),
             ]
@@ -81,7 +81,7 @@ class Evaluator:
         self.netG = netG
         self.netC = netC
 
-    def load_image(self, image_path, mask_path):
+    def loadImg(self, image_path, mask_path):
         # Name
         img_name = os.path.splitext(os.path.basename(image_path))[0]
         # Calib
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     for image_path, mask_path in tqdm.tqdm(zip(test_images, test_masks)):
         try:
             print(image_path, mask_path)
-            data = evaluator.load_image(image_path, mask_path)
+            data = evaluator.loadImg(image_path, mask_path)
             evaluator.eval(data, True)
         except Exception as e:
             print("error:", e.args)

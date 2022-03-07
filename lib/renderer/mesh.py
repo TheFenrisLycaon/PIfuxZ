@@ -348,7 +348,7 @@ def load_obj_mesh(mesh_file, with_normal=False, with_texture=False):
 
 
 def normalize_v3(arr):
-    """ Normalize a numpy array of 3 component vectors shape=(n,3) """
+    """Normalize a numpy array of 3 component vectors shape=(n,3)"""
     lens = np.sqrt(arr[:, 0] ** 2 + arr[:, 1] ** 2 + arr[:, 2] ** 2)
     eps = 0.00000001
     lens[lens < eps] = eps

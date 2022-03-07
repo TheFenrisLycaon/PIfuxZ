@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 
 class EvalDataset(Dataset):
     @staticmethod
-    def modify_commandline_options(parser):
+    def modifyCLI(parser):
         return parser
 
     def __init__(self, opt, root=None):
@@ -34,7 +34,7 @@ class EvalDataset(Dataset):
 
         self.max_view_angle = 360
         self.interval = 1
-        self.subjects = self.get_subjects()
+        self.subjects = self.getSubs()
 
         # PIL to tensor
         self.to_tensor = transforms.Compose(
@@ -45,7 +45,7 @@ class EvalDataset(Dataset):
             ]
         )
 
-    def get_subjects(self):
+    def getSubs(self):
         var_file = os.path.join(self.root, "val.txt")
         if os.path.exists(var_file):
             var_subjects = np.loadtxt(var_file, dtype=str)
@@ -56,7 +56,7 @@ class EvalDataset(Dataset):
     def __len__(self):
         return len(self.subjects) * self.max_view_angle // self.interval
 
-    def get_render(self, subject, num_views, view_id=None, random_sample=False):
+    def getRender(self, subject, num_views, view_id=None, random_sample=False):
         """
         Return the render data
         :param subject: subject name
@@ -149,7 +149,7 @@ class EvalDataset(Dataset):
             "mask": torch.stack(mask_list, dim=0),
         }
 
-    def get_item(self, index):
+    def getItem(self, index):
         # In case of a missing file or IO error, switch to a random sample instead
         try:
             sid = index % len(self.subjects)
@@ -162,7 +162,7 @@ class EvalDataset(Dataset):
                 "sid": sid,
                 "vid": vid,
             }
-            render_data = self.get_render(
+            render_data = self.getRender(
                 subject,
                 num_views=self.num_views,
                 view_id=vid,
@@ -172,7 +172,7 @@ class EvalDataset(Dataset):
             return res
         except Exception as e:
             print(e)
-            return self.get_item(index=random.randint(0, self.__len__() - 1))
+            return self.getItem(index=random.randint(0, self.__len__() - 1))
 
     def __getitem__(self, index):
-        return self.get_item(index)
+        return self.getItem(index)

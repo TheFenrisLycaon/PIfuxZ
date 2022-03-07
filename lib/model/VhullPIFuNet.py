@@ -15,7 +15,10 @@ class VhullPIFuNet(BasePIFuNet):
     """
 
     def __init__(
-        self, num_views, projection_mode="orthogonal", error_term=nn.MSELoss(),
+        self,
+        num_views,
+        projection_mode="orthogonal",
+        error_term=nn.MSELoss(),
     ):
         super(VhullPIFuNet, self).__init__(
             projection_mode=projection_mode, error_term=error_term

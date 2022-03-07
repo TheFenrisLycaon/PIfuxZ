@@ -204,7 +204,7 @@ class ResnetFilter(nn.Module):
 
         n_downsampling = 2
         for i in range(n_downsampling):  # add downsampling layers
-            mult = 2 ** i
+            mult = 2**i
             model += [
                 nn.Conv2d(
                     ngf * mult,
@@ -218,7 +218,7 @@ class ResnetFilter(nn.Module):
                 nn.ReLU(True),
             ]
 
-        mult = 2 ** n_downsampling
+        mult = 2**n_downsampling
         for i in range(n_blocks):  # add ResNet blocks
             if i == n_blocks - 1:
                 model += [

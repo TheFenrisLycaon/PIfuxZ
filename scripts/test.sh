@@ -7,12 +7,11 @@ DISPLAY_ID=$((GPU_ID*10+10))
 NAME='output'
 
 # Network configuration
-
 BATCH_SIZE=1
 MLP_DIM='257 1024 512 256 128 1'
 MLP_DIM_COLOR='513 1024 512 256 128 3'
 
-VOL_RES=2
+VOL_RES=512
 
 CHECKPOINTS_NETG_PATH='./checkpoints/net_G'
 CHECKPOINTS_NETC_PATH='./checkpoints/net_C'

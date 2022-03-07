@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 
-def get_bbox(msk):
+def getBbox(msk):
     rows = np.any(msk, axis=1)
     cols = np.any(msk, axis=0)
     rmin, rmax = np.where(rows)[0][[0, -1]]
@@ -15,9 +15,9 @@ def get_bbox(msk):
     return rmin, rmax, cmin, cmax
 
 
-def process_img(img, msk, bbox=None):
+def processImage(img, msk, bbox=None):
     if bbox is None:
-        bbox = get_bbox(msk > 100)
+        bbox = getBbox(msk > 100)
     cx = (bbox[3] + bbox[2]) // 2
     cy = (bbox[1] + bbox[0]) // 2
 
@@ -82,7 +82,7 @@ def main():
     else:
         msk = cv2.imread(args.input_mask, cv2.IMREAD_GRAYSCALE)
 
-    img_new, msk_new = process_img(img, msk)
+    img_new, msk_new = processImage(img, msk)
 
     img_name = Path(args.input_image).stem
 

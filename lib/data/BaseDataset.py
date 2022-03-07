@@ -7,11 +7,11 @@ class BaseDataset(Dataset):
     """
     This is the Base Datasets.
     Itself does nothing and is not runnable.
-    Check self.get_item function to see what it should return.
+    Check self.getItem function to see what it should return.
     """
 
     @staticmethod
-    def modify_commandline_options(parser, is_train):
+    def modifyCLI(parser, is_train):
         return parser
 
     def __init__(self, opt, phase="train"):
@@ -22,7 +22,7 @@ class BaseDataset(Dataset):
     def __len__(self):
         return 0
 
-    def get_item(self, index):
+    def getItem(self, index):
         # In case of a missing file or IO error, switch to a random sample instead
         try:
             res = {
@@ -44,7 +44,7 @@ class BaseDataset(Dataset):
                 "Requested index %s has missing files. Using a random sample instead."
                 % index
             )
-            return self.get_item(index=random.randint(0, self.__len__() - 1))
+            return self.getItem(index=random.randint(0, self.__len__() - 1))
 
     def __getitem__(self, index):
-        return self.get_item(index)
+        return self.getItem(index)

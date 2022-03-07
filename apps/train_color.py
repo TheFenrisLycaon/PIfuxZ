@@ -22,7 +22,7 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 opt = BaseOptions().parse()
 
 
-def train_color(opt):
+def trainColor(opt):
     # set cuda
     cuda = torch.device("cuda:%d" % opt.gpu_id)
 
@@ -205,12 +205,12 @@ def train_color(opt):
 
                 print("calc error (train) ...")
                 train_dataset.is_train = False
-                train_color_error = calc_error_color(
+                trainColor_error = calc_error_color(
                     opt, netG, netC, cuda, train_dataset, 100
                 )
                 train_dataset.is_train = True
-                print("eval train | color error:", train_color_error)
-                test_losses["train_color"] = train_color_error
+                print("eval train | color error:", trainColor_error)
+                test_losses["trainColor"] = trainColor_error
 
             if not opt.no_gen_mesh:
                 print("generate mesh (test) ...")
@@ -239,4 +239,4 @@ def train_color(opt):
 
 
 if __name__ == "__main__":
-    train_color(opt)
+    trainColor(opt)

@@ -22,7 +22,10 @@ class HGPIFuNet(BasePIFuNet):
     """
 
     def __init__(
-        self, opt, projection_mode="orthogonal", error_term=nn.MSELoss(),
+        self,
+        opt,
+        projection_mode="orthogonal",
+        error_term=nn.MSELoss(),
     ):
         super(HGPIFuNet, self).__init__(
             projection_mode=projection_mode, error_term=error_term
@@ -112,14 +115,14 @@ class HGPIFuNet(BasePIFuNet):
 
         self.preds = self.intermediate_preds_list[-1]
 
-    def get_im_feat(self):
+    def getIMFeat(self):
         """
         Get the image filter
         :return: [B, C_feat, H, W] image feature after filtering
         """
         return self.im_feat_list[-1]
 
-    def get_error(self):
+    def getError(self):
         """
         Hourglass has its own intermediate supervision scheme
         """
@@ -141,6 +144,6 @@ class HGPIFuNet(BasePIFuNet):
         res = self.get_preds()
 
         # get the error
-        error = self.get_error()
+        error = self.getError()
 
         return res, error

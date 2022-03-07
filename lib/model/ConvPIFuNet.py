@@ -21,7 +21,10 @@ class ConvPIFuNet(BasePIFuNet):
     """
 
     def __init__(
-        self, opt, projection_mode="orthogonal", error_term=nn.MSELoss(),
+        self,
+        opt,
+        projection_mode="orthogonal",
+        error_term=nn.MSELoss(),
     ):
         super(ConvPIFuNet, self).__init__(
             projection_mode=projection_mode, error_term=error_term

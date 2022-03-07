@@ -22,7 +22,7 @@ from lib.model import *
 opt = BaseOptions().parse()
 
 
-def train(opt):
+def trainShape(opt):
     # set cuda
     cuda = torch.device("cuda:%d" % opt.gpu_id)
 
@@ -232,4 +232,4 @@ def train(opt):
 
 
 if __name__ == "__main__":
-    train(opt)
+    trainShape(opt)

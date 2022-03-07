@@ -7,7 +7,7 @@ import argparse
 from tqdm import tqdm
 
 
-def factratio(N, D):
+def factRatio(N, D):
     if N >= D:
         prod = 1.0
         for i in range(D + 1, N + 1):
@@ -21,7 +21,7 @@ def factratio(N, D):
 
 
 def KVal(M, L):
-    return math.sqrt(((2 * L + 1) / (4 * math.pi)) * (factratio(L - M, L + M)))
+    return math.sqrt(((2 * L + 1) / (4 * math.pi)) * (factRatio(L - M, L + M)))
 
 
 def AssociatedLegendre(M, L, x):
@@ -70,7 +70,7 @@ def SphericalHarmonic(M, L, theta, phi):
         return KVal(0, L) * AssociatedLegendre(0, L, np.cos(theta))
 
 
-def save_obj(mesh_path, verts):
+def saveObj(mesh_path, verts):
     file = open(mesh_path, "w")
     for v in verts:
         file.write("v %.4f %.4f %.4f\n" % (v[0], v[1], v[2]))
