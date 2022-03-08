@@ -33,10 +33,8 @@ class Evaluator:
                 transforms.Resize(self.load_size),
                 transforms.ToTensor(),
                 transforms.Normalize(
-                    [
-                        (0.45, 0.45, 0.45),
-                        (0.45, 0.45, 0.45),
-                    ]
+                    (0.45, 0.45, 0.45),
+                    (0.45, 0.45, 0.45),
                 ),
             ]
         )
