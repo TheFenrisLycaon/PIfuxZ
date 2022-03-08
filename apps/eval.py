@@ -1,7 +1,12 @@
-import glob
-import json
 import os
 import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+import glob
+import json
+import time
 
 import numpy as np
 import torch
@@ -14,10 +19,6 @@ from lib.sample_util import *
 from lib.train_util import *
 from PIL import Image
 from torch.utils.data import DataLoader
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # get options
 opt = BaseOptions().parse()
